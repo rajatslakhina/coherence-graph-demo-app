@@ -39,9 +39,9 @@ jobs:
       - name: Build for an iOS Simulator destination
         # `generic/platform=iOS Simulator`, never a named device: pinning to
         # `name=iPhone 16,OS=latest` ties the job to whichever simulator
-        # runtimes happen to be installed on that day's runner image, which is
-        # not guaranteed and has broken this exact job before with
-        # "Unable to find a device matching the provided destination specifier".
+        # runtimes happen to be installed on that day's runner image, and they
+        # are not guaranteed. A compile-only check needs no device to exist,
+        # so asking for one only adds a way to fail.
         run: |
           set -euo pipefail
           xcodebuild build \
