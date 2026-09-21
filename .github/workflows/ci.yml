@@ -44,8 +44,15 @@ jobs:
         # so asking for one only adds a way to fail.
         run: |
           set -euo pipefail
+          # No SWIFT_TREAT_WARNINGS_AS_ERRORS on the command line: a setting
+          # passed to xcodebuild applies to every target in the build,
+          # including the Swift package dependency, which Xcode already
+          # compiles with `-suppress-warnings`. The two combine into
+          # "error: conflicting options '-warnings-as-errors' and
+          # '-suppress-warnings'" and the build fails before compiling
+          # anything. The setting lives on the Demo target in project.pbxproj
+          # instead, which is where it can only affect this app's own code.
           xcodebuild build \
             -project Demo.xcodeproj \
             -scheme Demo \
-            -destination 'generic/platform=iOS Simulator' \
-            SWIFT_TREAT_WARNINGS_AS_ERRORS=YES
+            -destination 'generic/platform=iOS Simulator'
