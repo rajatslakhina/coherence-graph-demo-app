@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Resolve the remote package and compile for iOS Simulator
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve the remote Swift package from GitHub
+        # This is the cheapest honest substitute for a human opening the
+        # project: it proves the pinned tag genuinely resolves from GitHub,
+        # rather than from a local path that only exists on one machine.
+        run: xcodebuild -resolvePackageDependencies -project Demo.xcodeproj -scheme Demo
+
+      - name: Print the resolved version
+        # Fails if nothing resolved. A step that cats a missing file and
+        # shrugs would let this job go green having proved nothing.
+        run: |
+          set -euo pipefail
+          resolved=$(find . -name Package.resolved -print -quit)
+          if [ -z "$resolved" ]; then
+            echo "::error::no Package.resolved — the remote package did not resolve"
+            exit 1
+          fi
+          echo "found: $resolved"
+          cat "$resolved"
+          grep -q "coherence-graph-kit" "$resolved" || {
+            echo "::error::resolved file does not reference coherence-graph-kit"
+            exit 1
+          }
+
+      - name: Build for an iOS Simulator destination
+        # `generic/platform=iOS Simulator`, never a named device: pinning to
+        # `name=iPhone 16,OS=latest` ties the job to whichever simulator
+        # runtimes happen to be installed on that day's runner image, which is
+        # not guaranteed and has broken this exact job before with
+        # "Unable to find a device matching the provided destination specifier".
+        run: |
+          set -euo pipefail
+          xcodebuild build \
+            -project Demo.xcodeproj \
+            -scheme Demo \
+            -destination 'generic/platform=iOS Simulator'
