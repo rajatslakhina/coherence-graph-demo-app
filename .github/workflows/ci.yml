@@ -47,4 +47,5 @@ jobs:
           xcodebuild build \
             -project Demo.xcodeproj \
             -scheme Demo \
-            -destination 'generic/platform=iOS Simulator'
+            -destination 'generic/platform=iOS Simulator' \
+            SWIFT_TREAT_WARNINGS_AS_ERRORS=YES
