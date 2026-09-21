@@ -281,7 +281,7 @@
 			repositoryURL = "https://github.com/rajatslakhina/coherence-graph-kit.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
+				minimumVersion = 3.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
