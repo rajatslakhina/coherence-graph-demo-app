@@ -38,7 +38,7 @@ The "Single-writer ownership" section demonstrates the other half of the answer,
 
 *Migrate* hands the domain over deliberately and appends to a visible transfer history. That separation is the point: `claim` throwing on a re-claim is what makes dual ownership impossible, so moving a domain during a migration cannot reuse it and gets its own verb, with an audit trail.
 
-Try the slider at either end, too. Writing the value the cart already holds publishes **nothing** on the right — the minimal-publish guarantee — while the naive propagator, which has no equality pruning, republishes both states anyway.
+The library also guarantees **minimal publish**: writing the value a node already holds produces no snapshot at all, while the naive propagator, which has no equality pruning, republishes regardless. The app handles that case and explains it in the panel, but it is reached only if SwiftUI re-invokes the slider binding with an unchanged value — so treat it as covered by the library's tests and the audit, not as something this README promises you will see. Nobody has run this app (see below).
 
 ## Screenshots
 
